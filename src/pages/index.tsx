@@ -1,15 +1,29 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useEffect } from "react";
-import { contract, getBlockNumber } from "../utils/ethersSetup";
+import { useEffect, useRef } from "react";
+import useFetchEvents from "../hooks/useFetchEvents";
+import {
+  contract,
+  getBlockNumber,
+  getEvents,
+  getMintEvents,
+} from "../utils/ethersSetup";
 
 const Home: NextPage = () => {
-  getBlockNumber().then(console.log);
+  // const events = useRef<any[]>([]);
 
-  contract.name().then(console.log);
-  // useEffect(() => {
-  //   getBlockNumber().then(console.log);
-  // }, []);
+  const { events } = useFetchEvents("Mint");
+
+  useEffect(() => {
+    // getMintEvents().then((res) => {
+    //   events.current = [...events.current, ...res];
+    //   console.log("res", res);
+    // });
+    // getEvents().then((res) => {
+    //   events.current = [...events.current, ...res];
+    //   console.log("res", res);
+    // })
+  }, []);
 
   return (
     <div>
