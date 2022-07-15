@@ -1,28 +1,43 @@
+import { BigNumber, Event } from "ethers";
 import type { NextPage } from "next";
+import dynamic from "next/dynamic";
 import Head from "next/head";
-import { useEffect, useRef } from "react";
-import useFetchEvents from "../hooks/useFetchEvents";
-import {
-  contract,
-  getBlockNumber,
-  getEvents,
-  getMintEvents,
-} from "../utils/ethersSetup";
+import { Suspense, useEffect, useState } from "react";
+
+import { contract, getBurnEvents, getMintEvents } from "../utils/ethersSetup";
+
+const EventDisplay = dynamic(() => import("../components/EventDisplay"), {
+  suspense: true,
+});
 
 const Home: NextPage = () => {
-  // const events = useRef<any[]>([]);
+  const [mintEvents, setMintEvents] = useState<Event[]>();
+  const [burnEvents, setBurnEvents] = useState<Event[]>();
 
-  const { events } = useFetchEvents("Mint");
+  const getMintEvents = async (from?: number, to?: number) => {
+    const events = await contract.queryFilter(
+      contract.filters.Mint(),
+      from,
+      to
+    );
+    const data = events.reverse().slice(0, 20);
+    setMintEvents(data);
+  };
+
+  const getBurnEvents = async (from?: number, to?: number) => {
+    const events = await contract.queryFilter(
+      contract.filters.Burn(),
+      from,
+      to
+    );
+
+    const data = events.reverse().slice(0, 20);
+    setBurnEvents(data);
+  };
 
   useEffect(() => {
-    // getMintEvents().then((res) => {
-    //   events.current = [...events.current, ...res];
-    //   console.log("res", res);
-    // });
-    // getEvents().then((res) => {
-    //   events.current = [...events.current, ...res];
-    //   console.log("res", res);
-    // })
+    getMintEvents();
+    getBurnEvents();
   }, []);
 
   return (
@@ -33,7 +48,21 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div>Hello</div>
+      <div>hey</div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <div>
+          {mintEvents?.map((event) => (
+            <div key={event.transactionHash}>
+              <EventDisplay event={event} />
+            </div>
+          ))}
+          {burnEvents?.map((event) => (
+            <div key={event.transactionHash}>
+              <EventDisplay event={event} />
+            </div>
+          ))}
+        </div>
+      </Suspense>
     </div>
   );
 };
