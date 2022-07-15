@@ -3,11 +3,16 @@ import dynamic from "next/dynamic";
 import { Suspense, useEffect, useState } from "react";
 
 import { contract } from "../utils/ethersSetup";
+import EventDisplay from "./EventDisplay";
+import Spinner from "./spinner";
 
-const EventDisplay = dynamic(() => import("../components/EventDisplay"), {
-  suspense: true,
-  ssr: false,
-});
+function Loading() {
+  return (
+    <div className="w-full flex justify-center mt-44 sm:mt-28">
+      <Spinner />
+    </div>
+  );
+}
 
 const EventList = () => {
   const [mintEvents, setMintEvents] = useState<Event[]>();
@@ -48,25 +53,21 @@ const EventList = () => {
   }, []);
 
   return (
-    <div className="flex">
+    <div className="flex gap-5">
       <div className="w-1/2">
-        <h2>Mint events</h2>
+        <h2 className="text-2xl font-bold pb-2">Mint events</h2>
         {mintEvents?.map((event) => (
           <div key={event.transactionHash}>
-            <Suspense fallback={<div>Loading...</div>}>
-              <EventDisplay event={event} />
-            </Suspense>
+            <EventDisplay event={event} />
           </div>
         ))}
       </div>
 
       <div className="w-1/2">
-        <h2>Burn events</h2>
+        <h2 className="text-2xl font-bold pb-2">Burn events</h2>
         {burnEvents?.map((event) => (
           <div key={event.transactionHash}>
-            <Suspense fallback={<div>Loading...</div>}>
-              <EventDisplay event={event} />
-            </Suspense>
+            <EventDisplay event={event} />
           </div>
         ))}
       </div>

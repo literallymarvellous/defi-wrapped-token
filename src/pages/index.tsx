@@ -1,12 +1,23 @@
 import type { NextPage } from "next";
+
 import dynamic from "next/dynamic";
 import Head from "next/head";
+import Image from "next/image";
 import { Suspense } from "react";
+import EventList from "../components/EventList";
+import Spinner from "../components/spinner";
 
-const EventList = dynamic(() => import("../components/EventList"), {
+const EventListDynamic = dynamic(() => import("../components/EventList"), {
   suspense: true,
-  ssr: false,
 });
+
+function Loading() {
+  return (
+    <div className="w-full flex justify-center mt-44 sm:mt-28">
+      <Spinner />
+    </div>
+  );
+}
 
 const Home: NextPage = () => {
   return (
@@ -17,11 +28,20 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="text-3xl">hey</div>
+      <div className="text-3xl flex py-4 gap">
+        <Image
+          src="/wbtc_28.webp"
+          width={30}
+          height={15}
+          alt="wrapped btc image"
+        />
+        <h1>Wbtc dashboard</h1>
+      </div>
 
-      <Suspense fallback={<div>Loading...</div>}>
-        <EventList />
+      <Suspense fallback={<Loading />}>
+        <EventListDynamic />
       </Suspense>
+      {/* <EventList /> */}
     </div>
   );
 };
