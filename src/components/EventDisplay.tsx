@@ -1,5 +1,5 @@
 import { Event } from "ethers";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const EventDisplay = ({ event }: { event: Event }) => {
   const [hash, setHash] = useState("");
@@ -9,7 +9,6 @@ const EventDisplay = ({ event }: { event: Event }) => {
   useEffect(() => {
     event.getBlock().then((block) => {
       const date = new Date(block.timestamp * 1000);
-      console.log(date.toLocaleString());
       setDate(date.toLocaleString());
     });
     event.getTransaction().then((tx) => {

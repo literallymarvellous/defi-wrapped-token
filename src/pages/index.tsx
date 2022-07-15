@@ -1,45 +1,14 @@
-import { BigNumber, Event } from "ethers";
 import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense } from "react";
 
-import { contract, getBurnEvents, getMintEvents } from "../utils/ethersSetup";
-
-const EventDisplay = dynamic(() => import("../components/EventDisplay"), {
+const EventList = dynamic(() => import("../components/EventList"), {
   suspense: true,
+  ssr: false,
 });
 
 const Home: NextPage = () => {
-  const [mintEvents, setMintEvents] = useState<Event[]>();
-  const [burnEvents, setBurnEvents] = useState<Event[]>();
-
-  const getMintEvents = async (from?: number, to?: number) => {
-    const events = await contract.queryFilter(
-      contract.filters.Mint(),
-      from,
-      to
-    );
-    const data = events.reverse().slice(0, 20);
-    setMintEvents(data);
-  };
-
-  const getBurnEvents = async (from?: number, to?: number) => {
-    const events = await contract.queryFilter(
-      contract.filters.Burn(),
-      from,
-      to
-    );
-
-    const data = events.reverse().slice(0, 20);
-    setBurnEvents(data);
-  };
-
-  useEffect(() => {
-    getMintEvents();
-    getBurnEvents();
-  }, []);
-
   return (
     <div>
       <Head>
@@ -48,20 +17,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div>hey</div>
+      <div className="text-3xl">hey</div>
+
       <Suspense fallback={<div>Loading...</div>}>
-        <div>
-          {mintEvents?.map((event) => (
-            <div key={event.transactionHash}>
-              <EventDisplay event={event} />
-            </div>
-          ))}
-          {burnEvents?.map((event) => (
-            <div key={event.transactionHash}>
-              <EventDisplay event={event} />
-            </div>
-          ))}
-        </div>
+        <EventList />
       </Suspense>
     </div>
   );
