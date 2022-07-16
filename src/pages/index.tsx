@@ -3,21 +3,7 @@ import type { NextPage } from "next";
 import dynamic from "next/dynamic";
 import Head from "next/head";
 import Image from "next/image";
-import { Suspense } from "react";
 import EventList from "../components/EventList";
-import Spinner from "../components/spinner";
-
-const EventListDynamic = dynamic(() => import("../components/EventList"), {
-  suspense: true,
-});
-
-function Loading() {
-  return (
-    <div className="w-full flex justify-center mt-44 sm:mt-28">
-      <Spinner />
-    </div>
-  );
-}
 
 const Home: NextPage = () => {
   return (
@@ -32,16 +18,13 @@ const Home: NextPage = () => {
         <Image
           src="/wbtc_28.webp"
           width={30}
-          height={15}
+          height={20}
           alt="wrapped btc image"
         />
         <h1>Wbtc dashboard</h1>
       </div>
 
-      <Suspense fallback={<Loading />}>
-        <EventListDynamic />
-      </Suspense>
-      {/* <EventList /> */}
+      <EventList />
     </div>
   );
 };
